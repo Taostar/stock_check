@@ -1,0 +1,41 @@
+[project]
+name = "stock-check-backend"
+version = "0.1.0"
+description = "Backend for Stock Check application with AI Agent"
+requires-python = ">=3.9"
+dependencies = [
+    # Web framework
+    "fastapi>=0.109.2",
+    "uvicorn>=0.27.1",
+    "python-multipart>=0.0.9",
+    # Data & Finance
+    "yfinance>=0.2.36",
+    "pandas>=2.2.0",
+    # LangChain (agnostic LLM)
+    "langchain>=0.1.0",
+    "langchain-core>=0.1.0",
+    "langchain-community>=0.0.20",
+    "langchain-openai>=0.0.5",
+    "langchain-anthropic>=0.1.0",
+    # Scheduling
+    "apscheduler>=3.10.0",
+    # HTTP client
+    "httpx>=0.26.0",
+    # Web scraping (NASDAQ earnings)
+    "beautifulsoup4>=4.12.0",
+    "lxml>=5.1.0",
+    # Configuration
+    "python-dotenv>=1.0.0",
+    "pydantic-settings>=2.1.0",
+    # Caching
+    "cachetools>=5.3.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest",
+]
