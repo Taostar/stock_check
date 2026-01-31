@@ -8,6 +8,8 @@ from datetime import datetime
 class AgentSummary(BaseModel):
     """AI-generated analysis summary."""
 
+    model_config = {"protected_namespaces": ()}
+
     summary: str = Field(..., description="AI-generated summary text")
     key_insights: list[str] = Field(default_factory=list, description="Bullet points of key insights")
     recommendations: list[str] = Field(default_factory=list, description="Action recommendations")

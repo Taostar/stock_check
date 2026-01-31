@@ -24,11 +24,14 @@ class HoldingsFetcher:
         Raises:
             httpx.HTTPError: If the request fails
         """
-        headers = {}
+        headers = {
+            "ngrok-skip-browser-warning": "true",  # Skip ngrok interstitial page
+            "User-Agent": "StockCheck/1.0",
+        }
         if self.settings.holdings_auth_token:
             headers["Authorization"] = f"Bearer {self.settings.holdings_auth_token}"
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=60.0) as client:
             try:
                 response = await client.get(
                     self.settings.holdings_endpoint_url,
@@ -70,7 +73,9 @@ class HoldingsFetcher:
         if isinstance(data, list):
             holdings_data = data
         elif isinstance(data, dict):
-            if "holdings" in data:
+            if "portfolio_holdings" in data:
+                holdings_data = data["portfolio_holdings"]
+            elif "holdings" in data:
                 holdings_data = data["holdings"]
             elif "data" in data:
                 holdings_data = data["data"]
@@ -116,20 +121,35 @@ class HoldingsFetcher:
         shares = float(
             item.get("shares") or
             item.get("quantity") or
+            item.get("open_quantity") or
             item.get("Shares") or
             item.get("Quantity") or
             0
         )
 
-        average_cost = item.get("average_cost") or item.get("averageCost") or item.get("cost_basis")
+        average_cost = (
+            item.get("average_cost") or
+            item.get("averageCost") or
+            item.get("average_entry_price") or
+            item.get("cost_basis")
+        )
         if average_cost:
             average_cost = float(average_cost)
 
-        current_price = item.get("current_price") or item.get("currentPrice") or item.get("price")
+        current_price = (
+            item.get("current_price") or
+            item.get("currentPrice") or
+            item.get("price")
+        )
         if current_price:
             current_price = float(current_price)
 
-        market_value = item.get("market_value") or item.get("marketValue") or item.get("value")
+        market_value = (
+            item.get("market_value") or
+            item.get("marketValue") or
+            item.get("current_market_value") or
+            item.get("value")
+        )
         if market_value:
             market_value = float(market_value)
         elif current_price and shares:

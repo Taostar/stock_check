@@ -1,9 +1,14 @@
 """Application configuration using pydantic-settings."""
 
 from functools import lru_cache
-from pydantic_settings import BaseSettings
+from pathlib import Path
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from typing import Literal
+
+# Get the directory where this config file lives (backend/app/)
+# Then go up one level to backend/ where .env is located
+ENV_FILE_PATH = Path(__file__).parent.parent / ".env"
 
 
 class Settings(BaseSettings):
@@ -67,10 +72,11 @@ class Settings(BaseSettings):
         description="Minutes to cache news data"
     )
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
+    model_config = SettingsConfigDict(
+        env_file=str(ENV_FILE_PATH),
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+    )
 
 
 @lru_cache
